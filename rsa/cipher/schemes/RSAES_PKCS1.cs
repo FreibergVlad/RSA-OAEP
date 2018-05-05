@@ -9,6 +9,11 @@ using System.Text;
 
 namespace RSA.cipher.schemes
 {
+    /// <summary>
+    ///     RSAES-PKCS1-v1_5 combines the RSAEP and RSADP primitives 
+    ///     with the EME-PKCS1-v1_5 encoding method.
+    ///     See https://tools.ietf.org/html/rfc3447#section-7.2 for more details.
+    /// </summary>
     public class RSAES_PKCS1
     {
 
@@ -21,6 +26,12 @@ namespace RSA.cipher.schemes
             cryptoPrimitives = new CryptoPrimitives();
         }
 
+        /// <summary>
+        ///     Method that combines RSAEP and EME-PKCS1 encoding
+        /// </summary>
+        /// <param name="publicKey">Object that represents public key. Instance of <see cref="PublicKey"/></param>
+        /// <param name="M">Message to be encrypted, an octet string of length mLen, where mLen <= k - 11</param>
+        /// <returns>Ciphertext, an octet string of length k</returns>
         public byte[] RSAES_PKCS1_Encrypt(PublicKey publicKey, byte[] M)
         {
             int k = publicKey.GetOctetsLength;
@@ -33,6 +44,18 @@ namespace RSA.cipher.schemes
             return C;
         }
 
+        /// <summary>
+        ///     Method that combines RSADP and EME-PKCS1 Decoding method
+        /// </summary>
+        /// <param name="privateKey">
+        ///     Object that represents private key. Instance of <see cref="PrivateKey"/>
+        /// </param>
+        /// <param name="C">
+        ///     Ciphertext, an octet string of length k
+        /// </param>
+        /// <returns>
+        ///     Decrypted message, an octet string
+        /// </returns>
         public byte[] RSAES_PKCS1_Decrypt(PrivateKey privateKey, byte[] C)
         {
             int k = privateKey.GetOctetsLength;
@@ -43,7 +66,7 @@ namespace RSA.cipher.schemes
             try
             {
                 m = cryptoPrimitives.RSADP(privateKey, c);
-            } catch(MessageRepresentativeOutOfRangeException e)
+            } catch(MessageRepresentativeOutOfRangeException)
             {
                 throw new DecryptionErrorException("Decryption error");
             }
@@ -52,6 +75,12 @@ namespace RSA.cipher.schemes
             return M;
         }
 
+        /// <summary>
+        ///      Methos that implements EME-PKCS1 v1.5 encoding
+        /// </summary>
+        /// <param name="k">Size of public key modulus in octets</param>
+        /// <param name="M">Message to be encoded, an octet string</param>
+        /// <returns>Encoded message, and octet string of length k</returns>
         public byte[] EME_PKCS1_Encoding(int k, byte[] M)
         {
             byte[] PS = ByteArraysUtils.GetRandomNonZeroOctets(RNGCryptoServiceProvider.Create(), k - M.Length - 3);
@@ -64,6 +93,14 @@ namespace RSA.cipher.schemes
             return EM;
         }
 
+        /// <summary>
+        ///     Methos that implements EME-PKCS1 v1.5 decoding
+        /// </summary>
+        /// <param name="EM">Encoded message. An octet string of length k</param>
+        /// <returns>Decoded message, and octet string</returns>
+        /// <exception cref="DecryptionErrorException">
+        ///     Method can throw exception.
+        /// </exception>
         public byte[] EME_PKCS1_Decoding(byte[] EM)
         {
             if (EM[0] != (byte)0x00 || EM[1] != (byte)0x02)

@@ -2,12 +2,8 @@
 using RSA.keys;
 using RSA.util;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Numerics;
 using System.Security.Cryptography;
-using System.Text;
 using System.Linq;
 
 namespace RSA.cipher.schemes
@@ -19,7 +15,8 @@ namespace RSA.cipher.schemes
     ///     EME-OAEP is based on Bellare and Rogaway's Optimal Asymmetric Encryption scheme [OAEP].
     ///     RSAES-OAEP can operate on messages of length up to k - 2hLen -2 octets, 
     ///     where hLen is the length of the output from the underlying hash function 
-    ///     and k is the length in octets of the recipient's RSA modulus.       
+    ///     and k is the length in octets of the recipient's RSA modulus.  
+    ///     See https://tools.ietf.org/html/rfc3447#page-16 for more details 
     /// </summary>
     public class RSAES_OAEP
     {
@@ -109,13 +106,25 @@ namespace RSA.cipher.schemes
         }
 
         /// <summary>
-        /// 
+        ///     Method that implements EME-OAEP encoding.
         /// </summary>
-        /// <param name="message"></param>
-        /// <param name="label"></param>
-        /// <param name="k"></param>
-        /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <param name="message">
+        ///     Message to be encoded, an octet string of length mLen, where mLen <= k - 2hLen - 2
+        /// </param>
+        /// <param name="label">
+        ///     Optional label to be associated with the message; the
+        ///     default value for L, if L is not provided, is the empty string.
+        /// </param>
+        /// <param name="k">
+        ///     Size of public key modulus in octets
+        /// </param>
+        /// <param name="hash">
+        ///     Hash function (hLen denotes the length in octets of
+        ///     the hash function output)
+        /// </param>
+        /// <returns>
+        ///     Encoded message of k length
+        /// </returns>
         public byte[] EME_OAEP_Encoding(byte[] message, byte[] label, int k, HashAlgorithm hash)
         {
             int hLen = hash.HashSize / 8;
@@ -139,13 +148,28 @@ namespace RSA.cipher.schemes
         }
 
         /// <summary>
-        /// 
+        ///     Method that implements EME-OAEP decoding
         /// </summary>
-        /// <param name="EM"></param>
-        /// <param name="label"></param>
-        /// <param name="k"></param>
-        /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <param name="EM">
+        ///     Message to be decoded. An octet string of length k
+        /// </param>
+        /// <param name="label">
+        ///     Optional label to be associated with the message; the
+        ///     default value for L, if L is not provided, is the empty string.
+        /// </param>
+        /// <param name="k">
+        ///     Size of public key modulus in octets
+        /// </param>
+        /// <param name="hash">
+        ///     Hash function (hLen denotes the length in octets of
+        ///     the hash function output)
+        /// </param>
+        /// <returns>
+        ///     Decoded message, octet string of length mLen
+        /// </returns>
+        /// <exception cref="DecryptionErrorException">
+        ///     Method can throw exception
+        /// </exception>
         public byte[] EME_OAEP_Decoding(byte[] EM, byte[] label, int k, HashAlgorithm hash)
         {
             int hLen = hash.HashSize / 8;
@@ -173,12 +197,21 @@ namespace RSA.cipher.schemes
         }
 
         /// <summary>
-        /// 
+        ///     A mask generation function takes an octet string of variable length
+        ///     and a desired output length as input, and outputs an octet string of
+        ///     the desired length.
+        ///     See https://tools.ietf.org/html/rfc3447#page-54 for more details.
         /// </summary>
-        /// <param name="mgfSeed"></param>
-        /// <param name="maskLen"></param>
-        /// <param name="hash"></param>
-        /// <returns></returns>
+        /// <param name="mgfSeed">Seed from which mask is generated, an octet string</param>
+        /// <param name="maskLen">Intended length in octets of the mask, at most 2^32 hLen</param>
+        /// <param name="hash">
+        ///     Hash function (hLen denotes the length in octets of the hash
+        ///     function output)
+        /// </param>
+        /// <returns>An octet string of length maskLen</returns>
+        /// <exception cref="MaskTooLongException">
+        ///     Thrown when maskLen > 2^32*hLen
+        /// </exception>
         public byte[] MGF1(byte[] mgfSeed, int maskLen, HashAlgorithm hash)
         {
             int hLen = hash.HashSize / 8;

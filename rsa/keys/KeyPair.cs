@@ -4,6 +4,9 @@ using System.Text;
 
 namespace RSA.keys
 {
+    /// <summary>
+    ///     Class that represents RSA key pair
+    /// </summary>
     public class KeyPair
     {        
         private PrivateKey privateKey;

@@ -1,5 +1,6 @@
 ﻿using rsa.util;
 using RSA.cipher.schemes;
+using RSA.command;
 using RSA.keygen;
 using RSA.keys;
 using RSA.util;
@@ -9,24 +10,44 @@ using System.Text;
 
 namespace rsa
 {
-    class Program
+    public class Program
     {
-        static void Main(string[] args)
+
+        private static CommandContainer commandContainer = new CommandContainer();
+
+        static Program()
         {
-            
-         
+            InitializeApplicationCommands();
         }
 
-        private static void ShowUsage()
+        static void Main(string[] args)
         {
-            Console.WriteLine("DESCRIPTION");
-            Console.WriteLine(" rsa - encryption and sign tool. Simple implementaton of PKCS#1 v2.2 standard, created for educational purposes.");
-            Console.WriteLine("COMMANDS");
-            Console.WriteLine(" --gen-keys key_size path_to_keys prefix");
-            Console.WriteLine(" --encrypt public_key file");
-            Console.WriteLine(" --decrypt private_key file");
-            Console.WriteLine(" --sign private_key file");
-            Console.WriteLine(" --verify_sign public_key file");
+            InitializeApplicationCommands();
+            if (args.Length >= 1 && commandContainer.ContainsCommand(args[0]))
+            {
+                try
+                {
+                    commandContainer.GetCommand(args[0]).Initialize(args).Execute();
+                } catch (Exception)
+                {
+                    Console.WriteLine("Incorrect usage!");
+                    commandContainer.GetCommand("--help").Execute();
+                    Environment.Exit(1);
+                }
+            } else
+            {
+                Console.WriteLine("Incorrect usage!");
+                commandContainer.GetCommand("--help").Execute();
+                Environment.Exit(1);
+            }
+        }
+
+        private static void InitializeApplicationCommands()
+        {
+            commandContainer.AddCommand("--help", new HelpCommand());
+            commandContainer.AddCommand("--gen-keys", new GenKeysCommand());
+            commandContainer.AddCommand("--encrypt", new EncryptCommand());
+            commandContainer.AddCommand("--decrypt", new DecryptCommand());
         }
     }
 }

@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27130.2036
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RSA", "rsa\RSA.csproj", "{A4920FF2-ED88-461F-B151-FA4C1207BBDF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rsa", "rsa\rsa.csproj", "{A4920FF2-ED88-461F-B151-FA4C1207BBDF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSATest", "RSATest\RSATest.csproj", "{DD2EC0EA-73BA-4BA7-B923-C35F555B4A49}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "rsa_test", "rsa_test\rsa_test.csproj", "{DD2EC0EA-73BA-4BA7-B923-C35F555B4A49}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

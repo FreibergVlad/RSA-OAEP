@@ -24,6 +24,13 @@ namespace RSA.keys
 
         public int GetOctetsLength { get => octetsLength; }
 
+        public override string ToString()
+        {
+            string res = "modulus:" + Environment.NewLine + modulus + Environment.NewLine;
+            res = res + "private exponent:" + Environment.NewLine + privateExponent;
+            return res;
+        }
+
         public override bool Equals(object obj)
         {
             var key = obj as PrivateKey;

@@ -8,19 +8,27 @@ using System.Text;
 
 namespace RSA.keygen
 {
+    /// <summary>
+    ///     Class for creating private and public keys
+    /// </summary>
     public class KeyGenerator
     {
         private PrimeGenerator primeGenerator;
-        private MathUtils mathUtils;
-
         private const int PUBLIC_EXPONENT = 65537;
 
         public KeyGenerator()
         {
             primeGenerator = new PrimeGenerator();
-            mathUtils = new MathUtils();
         }
-
+        
+        /// <summary>
+        ///     Method for generating key pair using RSA algorithm
+        /// </summary>
+        /// <param name="bitLength">Bit size of key</param>
+        /// <returns>
+        ///     Key pair. Instance of <see cref="KeyPair"/> class. Consists of
+        ///     public and private keys.
+        /// </returns>
         public KeyPair GenerateKeys(int bitLength)
         {
             // Generate two big random primes
@@ -31,7 +39,7 @@ namespace RSA.keygen
             // Calculate the Eiler's function 
             BigInteger phi = (p - 1) * (q - 1);
             // Calculate the modular multiplicative inverse
-            BigInteger d = mathUtils.ModInverse(PUBLIC_EXPONENT, phi);
+            BigInteger d = MathUtils.ModInverse(PUBLIC_EXPONENT, phi);
             // The public key consists of the modulus n and the public exponent e
             PublicKey publicKey = new PublicKey(n, PUBLIC_EXPONENT);
             //The private key consists of the private exponent d, which must be kept secret, and modulus n
