@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace RSA.keys
+namespace RSA.errors
 {
-    public abstract class Key
+    public class CommandNotInitializedException : Exception
     {
     }
 }

@@ -1,6 +1,7 @@
 ﻿using rsa.util;
 using RSA.cipher.schemes;
 using RSA.command;
+using RSA.errors;
 using RSA.keygen;
 using RSA.keys;
 using RSA.util;
@@ -28,7 +29,18 @@ namespace rsa
                 try
                 {
                     commandContainer.GetCommand(args[0]).Initialize(args).Execute();
-                } catch (Exception)
+                }
+                catch (CryptographicException)
+                {
+                    Console.WriteLine("Incorrect passphrase!");
+                    Environment.Exit(1);
+                }
+                catch (DecryptionException)
+                {
+                    Console.WriteLine("Decryption error!");
+                    Environment.Exit(1);
+                }
+                catch(Exception)
                 {
                     Console.WriteLine("Incorrect usage!");
                     commandContainer.GetCommand("--help").Execute();

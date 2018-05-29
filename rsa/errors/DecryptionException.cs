@@ -4,9 +4,9 @@ using System.Text;
 
 namespace RSA.errors
 {
-    public class IntegerTooLargeException : DecryptionException
+    public class DecryptionException : Exception
     {
-        public IntegerTooLargeException(string message) : base(message)
+        public DecryptionException(string message) : base(message)
         {
         }
     }

@@ -4,11 +4,10 @@ using System.Text;
 
 namespace RSA.errors
 {
-    class MessageTooLongException : ArgumentException
+    public class MessageTooLongException : DecryptionException
     {
         public MessageTooLongException(string message) : base(message)
         {
-            
         }
     }
 }

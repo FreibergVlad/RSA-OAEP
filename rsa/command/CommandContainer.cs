@@ -5,7 +5,7 @@ using System.Text;
 namespace RSA.command
 {
     /// <summary>
-    ///     Class that store console commands
+    ///     Class that stores console commands
     /// </summary>
     public class CommandContainer
     {

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RSA.errors
 {
-    public class MaskTooLongException : ArgumentException
+    public class MaskTooLongException : DecryptionException
     {
         public MaskTooLongException(string message) : base(message)
         {

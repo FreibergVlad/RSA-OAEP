@@ -24,9 +24,12 @@ namespace RSA.command
         private byte[] plainText;
         private string pathToCipherText;
         private byte[] label = { };
+        private bool initialized = false;
         
         public void Execute()
         {
+            if (!isInitialized())
+                throw new CommandNotInitializedException();
             Console.WriteLine("Encrypting...");
             byte[] c = rsaes_oaep.RSAES_OAEP_Encrypt(publicKey, plainText, label, hash);
             Console.WriteLine("Saving encrypted file to " + pathToCipherText);
@@ -48,6 +51,7 @@ namespace RSA.command
                     pathToCipherText = args[3];
                     rsaes_oaep = new RSAES_OAEP();
                     hash = new SHA512CryptoServiceProvider();
+                    initialized = true;
                     return this;
 
                 } catch(Exception)
@@ -58,5 +62,8 @@ namespace RSA.command
             else
                 throw new ArgumentException();
         }
+
+        public bool isInitialized() => initialized;
+
     }
 }

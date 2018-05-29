@@ -4,7 +4,7 @@ using System.Text;
 
 namespace RSA.errors
 {
-    public class DecryptionErrorException : ArgumentException
+    public class DecryptionErrorException : DecryptionException
     {
         public DecryptionErrorException(string message) : base(message)
         {

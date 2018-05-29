@@ -11,6 +11,7 @@ namespace RSA.command
     /// </summary>
     public class HelpCommand : Command
     {
+
         public void Execute()
         {
             ShowUsage();
@@ -21,12 +22,14 @@ namespace RSA.command
             return this;
         }
 
+        public bool isInitialized() => true;
+
         private void ShowUsage()
         {
             Console.WriteLine("DESCRIPTION");
             Console.WriteLine(" rsa - encryption and sign tool. Simple implementaton of PKCS#1 v2.2 standard, created for educational purposes.");
             Console.WriteLine("COMMANDS");
-            Console.WriteLine(" --gen-keys key_size path_to_keys prefix");
+            Console.WriteLine(" --gen-keys key_size path_to_keys");
             Console.WriteLine(" --encrypt public_key file enc_file");
             Console.WriteLine(" --decrypt private_key file");
             Console.WriteLine(" --sign private_key file");

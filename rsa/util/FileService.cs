@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Numerics;
+using System.Security;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -18,6 +19,13 @@ namespace RSA.util
         private const String PUB_KEY_LAST_LINE = "END RSA PUBLIC KEY";
         private const String PRIV_KEY_FIRST_LINE = "BEGIN RSA PRIVATE KEY";
         private const String PRIV_KEY_LAST_LINE = "END RSA PRIVATE KEY";
+
+        private SymmetricCryptoService cryptoService;
+
+        public FileService()
+        {
+            cryptoService = new SymmetricCryptoService();
+        }
        
         /// <summary>
         ///     Method to export public key in ASCII format
@@ -34,14 +42,14 @@ namespace RSA.util
         }
 
         /// <summary>
-        ///     Method to export private key in ASCII format
+        ///     Method to encrypt and export private key in ASCII format
         /// </summary>
         /// <param name="privateKey">Private key, instance of <see cref="PrivateKey"/></param>
         /// <param name="path">Path, by witch the key will be saved</param>
-        public void SavePrivateKeyInFile(PrivateKey privateKey, String path)
+        public void SavePrivateKeyInFile(PrivateKey privateKey, String path, String passphrase)
         {
-            string base64Key = Convert.ToBase64String(Encoding.UTF8.GetBytes(privateKey.ToString()),
-                Base64FormattingOptions.InsertLineBreaks);
+            byte[] encryptedKey = cryptoService.Encrypt(Encoding.UTF8.GetBytes(privateKey.ToString()), passphrase);
+            string base64Key = Convert.ToBase64String(encryptedKey, Base64FormattingOptions.InsertLineBreaks);
             base64Key = PRIV_KEY_FIRST_LINE + Environment.NewLine + Environment.NewLine + base64Key;
             base64Key += Environment.NewLine + Environment.NewLine + PRIV_KEY_LAST_LINE;
             File.WriteAllText(path, base64Key);
@@ -70,11 +78,11 @@ namespace RSA.util
         }
 
         /// <summary>
-        ///     Method to import private key from file
+        ///     Method to decrypt and import private key from file
         /// </summary>
         /// <param name="path">Path where private key locates</param>
         /// <returns>Private key, instance of <see cref="PrivateKey"/></returns>
-        public PrivateKey GetPrivateKeyFromFile(String path)
+        public PrivateKey GetPrivateKeyFromFile(String path, String passphrase)
         {
             String[] lines = File.ReadAllLines(path);
             if (lines[0] != PRIV_KEY_FIRST_LINE || lines[lines.Length - 1] != PRIV_KEY_LAST_LINE ||
@@ -83,7 +91,8 @@ namespace RSA.util
             String[] keyLines = new String[lines.Length - 4];
             Array.Copy(lines, 2, keyLines, 0, keyLines.Length);
             String base64Key = String.Join("", keyLines);
-            String[] key = Encoding.UTF8.GetString(Convert.FromBase64String(base64Key)).Split(Environment.NewLine);
+            byte[] decryptedKey = cryptoService.Decrypt(Convert.FromBase64String(base64Key), passphrase);
+            String[] key = Encoding.UTF8.GetString(decryptedKey).Split(Environment.NewLine);
             if (key[0] != "modulus:" || key[2] != "private exponent:")
                 throw new IllegalKeyFileFormatException("Illegal key format!");
             BigInteger modulus = BigInteger.Parse(key[1]);

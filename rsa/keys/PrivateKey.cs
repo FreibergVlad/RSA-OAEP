@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RSA.keys
 {
-    public class PrivateKey : Key
+    public class PrivateKey
     {
         private BigInteger modulus;
         private BigInteger privateExponent;
