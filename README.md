@@ -1,5 +1,5 @@
-# RSA-OAEP
-fvcrypt - simple cryptography tool, created for educational purposes. It's a simplifyed implementation of PKCS #1 v.2.2 standard. <br>
+# Fvcrypt
+fvcrypt - simple cryptography tool, created for educational purposes. It's a simplifyed implementation of [PKCS #1 v.2.2](https://tools.ietf.org/html/rfc8017) standard. <br>
 Program provides command line interface that implements the following functions:
 <ul>
   <li>Generation of RSA key pair</li>
