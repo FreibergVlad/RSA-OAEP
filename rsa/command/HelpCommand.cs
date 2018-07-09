@@ -27,13 +27,13 @@ namespace RSA.command
         private void ShowUsage()
         {
             Console.WriteLine("DESCRIPTION");
-            Console.WriteLine(" rsa - encryption and sign tool. Simple implementaton of PKCS#1 v2.2 standard, created for educational purposes.");
+            Console.WriteLine(" rsa - encryption and sign tool.\n Simple implementaton of PKCS#1 v2.2 standard, created for educational purposes.");
             Console.WriteLine("COMMANDS");
-            Console.WriteLine(" --gen-keys key_size path_to_keys");
-            Console.WriteLine(" --encrypt public_key file enc_file");
-            Console.WriteLine(" --decrypt private_key file");
-            Console.WriteLine(" --sign private_key file");
-            Console.WriteLine(" --verify_sign public_key file");
+            Console.WriteLine(" --gen-keys <key_size>");
+            Console.WriteLine(" --encrypt <public_key> <file> <enc_file>");
+            Console.WriteLine(" --decrypt <private_key> <file>");
+            Console.WriteLine(" --sign <private_key> <file>");
+            Console.WriteLine(" --verify-sign <public_key> <file>");
         }
     }
 }

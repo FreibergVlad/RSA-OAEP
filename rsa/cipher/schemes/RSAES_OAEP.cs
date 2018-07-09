@@ -23,6 +23,7 @@ namespace RSA.cipher.schemes
 
         private DataPrimitives dataPrimitives = new DataPrimitives();
         private CryptoPrimitives cryptoPrimitives = new CryptoPrimitives();
+        private MGF mgf = new MGF();
 
         /// <summary>
         ///     Method that combines <see cref="CryptoPrimitives.RSAEP(PublicKey, BigInteger)"/>
@@ -136,9 +137,9 @@ namespace RSA.cipher.schemes
             DB[lHash.Length + PS.Length] = 0x01;
             System.Buffer.BlockCopy(message, 0, DB, lHash.Length + PS.Length + 1, message.Length);
             byte[] seed = ByteArraysUtils.GetRandomOctets(RNGCryptoServiceProvider.Create(), hLen);
-            byte[] dbMask = MGF1(seed, k - hLen - 1, hash);
+            byte[] dbMask = mgf.MGF1(seed, k - hLen - 1, hash);
             byte[] maskedDB = ByteArraysUtils.XorBytes(DB, dbMask);
-            byte[] seedMask = MGF1(maskedDB, hLen, hash);
+            byte[] seedMask = mgf.MGF1(maskedDB, hLen, hash);
             byte[] maskedSeed = ByteArraysUtils.XorBytes(seed, seedMask);
             byte[] EM = new byte[k];
             System.Buffer.SetByte(EM, 0, 0x00);
@@ -180,9 +181,9 @@ namespace RSA.cipher.schemes
             byte[] maskedDB = new byte[k - hLen - 1];
             System.Buffer.BlockCopy(EM, 1, maskedSeed, 0, maskedSeed.Length);
             System.Buffer.BlockCopy(EM, 1 + maskedSeed.Length, maskedDB, 0, maskedDB.Length);
-            byte[] seedMask = MGF1(maskedDB, hLen, hash);
+            byte[] seedMask = mgf.MGF1(maskedDB, hLen, hash);
             byte[] seed = ByteArraysUtils.XorBytes(maskedSeed, seedMask);
-            byte[] dbMask = MGF1(seed, k - hLen - 1, hash);
+            byte[] dbMask = mgf.MGF1(seed, k - hLen - 1, hash);
             byte[] DB = ByteArraysUtils.XorBytes(maskedDB, dbMask);
             byte[] lHash_dash = new byte[hLen];
             System.Buffer.BlockCopy(DB, 0, lHash_dash, 0, hLen);
@@ -194,37 +195,6 @@ namespace RSA.cipher.schemes
             byte[] M = new byte[DB.Length - 1 - i];
             System.Buffer.BlockCopy(DB, i + 1, M, 0, M.Length);
             return M;
-        }
-
-        /// <summary>
-        ///     A mask generation function takes an octet string of variable length
-        ///     and a desired output length as input, and outputs an octet string of
-        ///     the desired length.
-        ///     See https://tools.ietf.org/html/rfc3447#page-54 for more details.
-        /// </summary>
-        /// <param name="mgfSeed">Seed from which mask is generated, an octet string</param>
-        /// <param name="maskLen">Intended length in octets of the mask, at most 2^32 hLen</param>
-        /// <param name="hash">
-        ///     Hash function (hLen denotes the length in octets of the hash
-        ///     function output)
-        /// </param>
-        /// <returns>An octet string of length maskLen</returns>
-        /// <exception cref="MaskTooLongException">
-        ///     Thrown when maskLen > 2^32*hLen
-        /// </exception>
-        public byte[] MGF1(byte[] mgfSeed, int maskLen, HashAlgorithm hash)
-        {
-            int hLen = hash.HashSize / 8;
-            if (maskLen > BigInteger.Pow(2, 32) * hLen)
-                throw new MaskTooLongException("Mask too long");
-            byte[] T = new byte[0];
-            for(BigInteger counter = 0; counter < (maskLen -1) / hLen + 1; counter++)
-            {
-                byte[] C = dataPrimitives.I2OSP(counter, 4);
-                byte[] H = hash.ComputeHash(ByteArraysUtils.Concat(mgfSeed, C));
-                T = ByteArraysUtils.Concat(T, H);
-            }
-            return ByteArraysUtils.GetSubArray(T, 0, maskLen);
         }
     }
 }

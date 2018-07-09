@@ -101,7 +101,5 @@ namespace RSA.util
             var keyGenerator = new Rfc2898DeriveBytes(Encoding.UTF8.GetBytes(password), SALT, Iterations);
             return keyGenerator.GetBytes(keyBytes);
         }
-
- 
     }
 }
