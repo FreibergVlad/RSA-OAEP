@@ -7,3 +7,12 @@ Program provides command line interface that implements the following functions:
   <li>RSA encryption with PKCS1-v1_5 encoding method</li>
   <li>Private key encryption with AES-256</li>
 </ul>
+
+### Usage
+
+<ul>
+  <li>Key Generation <code> --gen-keys [key size] </code></li>
+  <li>Encryption <code> --encrypt [public key] [file to encrypt] [name of encrypted file] </code></li>
+  <li>Decryption <code> --decrypt [private key] [file to decrypt] [name of decrypted file] </code></li>
+  <li>Help <code> --help </code></li>
+</ul>
